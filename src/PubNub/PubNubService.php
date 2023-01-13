@@ -66,7 +66,7 @@ class PubNubService
      * @return void
      * @throws PubNubConfigurationException
      */
-    public function publish(string $channel, $message): void
+    public function publish(string $channel, string $message): void
     {
         $this->getPubNubClient()
             ->publish()
