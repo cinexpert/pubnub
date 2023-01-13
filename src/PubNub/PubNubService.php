@@ -62,11 +62,11 @@ class PubNubService
 
     /**
      * @param string $channel
-     * @param string $message
+     * @param mixed $message
      * @return void
      * @throws PubNubConfigurationException
      */
-    public function publish(string $channel, string $message): void
+    public function publish(string $channel, $message): void
     {
         $this->getPubNubClient()
             ->publish()
