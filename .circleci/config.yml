@@ -1,0 +1,95 @@
+version: 2.1
+
+master_branch_only: &master_branch_only
+  filters:
+    branches:
+      only: /^master$/
+    tags:
+      ignore: /.*/
+
+production_only: &production_only
+  filters:
+    branches:
+      ignore: /.*/
+    tags:
+      only: /.*/
+
+composer_install: &composer_install
+  name: Composer install
+  command: ./composer.phar install -n
+
+composer_save_cache: &composer_save_cache
+  key: composer-cache-{{ checksum "composer.lock" }}
+  paths:
+    - vendor
+
+composer_restore_cache: &composer_restore_cache
+  keys:
+    - composer-cache-{{ checksum "composer.lock" }}
+
+jobs:
+  build:
+    docker:
+      - image: cinexpert/alpine-php-build:latest
+        auth:
+          username: ${DOCKER_HUB_LOGIN}
+          password: ${DOCKER_HUB_PASSWORD}
+    resource_class: large
+    working_directory: /var/www/html
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *composer_restore_cache
+      - run:
+          <<: *composer_install
+      - save_cache:
+          <<: *composer_save_cache
+      - persist_to_workspace:
+          root: /var/www/html
+          paths:
+            - .
+
+  static:
+    docker:
+      - image: cinexpert/alpine-php-apache-build:latest
+        auth:
+          username: ${DOCKER_HUB_LOGIN}
+          password: ${DOCKER_HUB_PASSWORD}
+    working_directory: /var/www/html
+    resource_class: large
+    steps:
+      - attach_workspace:
+          at: /var/www/html
+      - run:
+          name: PHPStan
+          command: |
+            mkdir -p results/PHPStan
+            php -d memory_limit=4G vendor/bin/phpstan --error-format=junit > results/PHPStan/result.xml; php -d memory_limit=4G vendor/bin/phpstan
+      - run:
+          name: PHPCS
+          command: |
+            mkdir -p results/PHPCS
+            vendor/bin/phpcs module
+      - store_test_results:
+          path: results
+      - store_artifacts:
+          path: results
+
+workflows:
+  version: 2
+  testing:
+    jobs:
+      - build:
+          <<: *master_branch_only
+      - static:
+          <<: *master_branch_only
+          requires:
+            - build
+  production:
+    jobs:
+      - build:
+          <<: *production_only
+      - static:
+          <<: *production_only
+          requires:
+            - build
