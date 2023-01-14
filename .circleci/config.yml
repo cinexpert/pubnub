@@ -79,17 +79,13 @@ workflows:
   version: 2
   testing:
     jobs:
-      - build:
-          <<: *master_branch_only
+      - build
       - static:
-          <<: *master_branch_only
           requires:
             - build
   production:
     jobs:
-      - build:
-          <<: *production_only
+      - build
       - static:
-          <<: *production_only
           requires:
             - build
