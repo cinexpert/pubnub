@@ -51,7 +51,7 @@ class PubNubService
             $pnConfiguration
                 ->setPublishKey($this->publisherKey)
                 ->setSubscribeKey($this->subscriberKey)
-                ->setUserId($this->userId)
+                ->setUuid($this->userId)
                 ->setSecure(true);
 
             $this->pubNubClient = new PubNub($pnConfiguration);

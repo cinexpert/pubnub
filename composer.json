@@ -6,7 +6,7 @@
     "homepage": "https://github.com/cinexpert/pubnub",
     "require": {
         "php": ">=7.4",
-        "pubnub/pubnub": "^5.1"
+        "pubnub/pubnub": "^4.7"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.7",
