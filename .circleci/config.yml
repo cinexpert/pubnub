@@ -83,9 +83,3 @@ workflows:
       - static:
           requires:
             - build
-  production:
-    jobs:
-      - build
-      - static:
-          requires:
-            - build
