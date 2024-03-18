@@ -11,6 +11,9 @@
 
 namespace Cinexpert\PubNub;
 
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use PubNub\Exceptions\PubNubConfigurationException;
 use PubNub\PNConfiguration;
 use PubNub\PubNub;
@@ -55,6 +58,11 @@ class PubNubService
                 ->setSecure(true);
 
             $this->pubNubClient = new PubNub($pnConfiguration);
+
+//            $logger = new Logger('pubnub');
+//            $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
+//            $this->pubNubClient->setLogger($logger);
+//            $this->pubNubClient->getLogger()->pushHandler(new ErrorLogHandler());
         }
 
         return $this->pubNubClient;
