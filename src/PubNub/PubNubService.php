@@ -60,7 +60,7 @@ class PubNubService
             $this->pubNubClient = new PubNub($pnConfiguration);
 
             $logger = new Logger('pubnub');
-            $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
+            $logger->pushHandler(new StreamHandler('php://stdout', Logger::ERROR));
             $this->pubNubClient->setLogger($logger);
             $this->pubNubClient->getLogger()->pushHandler(new ErrorLogHandler());
         }
